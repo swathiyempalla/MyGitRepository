@@ -7,7 +7,7 @@ import com.restexample.crud.entities.Users;
 public interface IUserService {
      List<Users> getAllUsers();
      boolean addUser(Users user);
-     void updateUser(String id,Users user);
-     void deleteUser(String userId);
+     public String updateUser(String id,Users user);
+     public String deleteUser(String userId);
      public String createUser(Users user);
 }

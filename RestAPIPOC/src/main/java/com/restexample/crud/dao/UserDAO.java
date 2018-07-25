@@ -3,6 +3,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -10,20 +11,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.restexample.crud.entities.Users;
 import com.restexample.crud.exceptions.UserNotFoundException;
+import com.restexample.crud.util.RandomStringGenerator;
 
 @Transactional
 @Repository
 public class UserDAO implements IUserDAO {
 	@PersistenceContext	
 	private EntityManager entityManager;
-	public static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
 
+	//To add user
 	@Override
 	public String addUser(Users user) {
    
-	
+	String genString=RandomStringGenerator.randomAlphaNumeric(5);
     	Users userobj=new Users();
-		userobj.setId(user.getId());
+		userobj.setId(genString);
 		userobj.setfName(user.getfName());
 		userobj.setlName(user.getlName());
 		userobj.setEmail(user.getEmail());
@@ -31,40 +33,43 @@ public class UserDAO implements IUserDAO {
 		userobj.setActive(true);
 		userobj.setBirthDate(user.getBirthDate());
 		entityManager.persist(userobj);	
-		return userobj.getId();
+		return genString;
 	
 	
 	}
 
+	//To update pin code and birth date of user
 	@Override
-	public void updateUser(String id,Users user) {
+	public String updateUser(String id,Users user) {
 		Users user1 = entityManager.find(Users.class,id);
 		if(user1==null) {
 			String message="Unable to update. User with "+id+"not found";
-			logger.error("Unable to update.User not found.", user.getId());
 			throw new UserNotFoundException(id,message);
 		}
 		user1.setPinCode(user.getPinCode());
 		user1.setBirthDate(user.getBirthDate());
 		entityManager.flush();
+		String message="USER_UPDATED_SUCCESSFULLY";
+		return message;
 		
 	}
 
+	//To Deactivate User
 	@Override
-	public void deleteUser(String userId) {
+	public String deleteUser(String userId) {
 		Users userobj=entityManager.find(Users.class, userId);
 		if(userobj==null) {
-			
-			 String message="Unable to delete.User with id "+userId+" not found";
-			 logger.error("Unable to delete. User not found.",userId);
+			String message="Unable to delete.User with id "+userId+" not found";
 			throw new UserNotFoundException(userId,message);
 		}
 		userobj.setActive(false);
-		entityManager.persist(userobj);
-		
+		entityManager.flush();
+		String message="USER_DEACTIVATED_SUCCESSFULLY";
+		return message;
 	}
 
-
+    
+	//To retrieve all users
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Users> getAllUsers() {
@@ -73,6 +78,7 @@ public class UserDAO implements IUserDAO {
 
 	}
 
+	//To check whether active user exists with same email id
 	@Override
 	public boolean CheckIfUserExists(Users user) {
 		int count=0;

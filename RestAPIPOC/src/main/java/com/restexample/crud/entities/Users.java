@@ -9,6 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -22,18 +25,26 @@ private static final long serialVersionUID = 1L;
 @Column(name="userid")
 private String id;
 
+@NotNull(message = "first name cannot be null")
+@NotBlank(message="first name cannot be blank")
 @Column(name="firstName")
 private String fName;
 
+@NotNull(message = "last name cannot be null")
+@NotBlank(message="last name cannot be blank")
 @Column(name="lastName")
 private String lName;
 
+@NotNull(message = "Email id cannot be null")
+@Email(message="Invalid Email format")
 @Column(name="email")
 private String email;
 
+@NotNull(message = "Pincode cannot be null")
 @Column(name="pincode")
 private Integer pinCode;
 
+@NotNull(message = "Birthdate cannot be null")
 @JsonFormat(pattern="dd-MMM-yyyy")
 @Temporal(TemporalType.DATE)
 @Column(name="birthDate")
